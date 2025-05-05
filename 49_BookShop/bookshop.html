@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mansoon BookShop</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+    }
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: #007bff !important;
+      cursor: pointer;
+    }
+    .nav-link {
+      font-weight: 600;
+      color: #212529 !important;
+      cursor: pointer;
+      user-select: none;
+    }
+    .nav-link.active {
+      font-weight: 700;
+      border-bottom: 3px solid #007bff;
+      color: #007bff !important;
+    }
+    #main-container {
+      padding-bottom: 80px;
+      min-height: 100vh;
+    }
+    section.page {
+      display: none;
+    }
+    section.page.active {
+      display: block;
+    }
+    .banner {
+      position: relative;
+      overflow: hidden;
+      height: 250px;
+      border-radius: 15px;
+      margin-bottom: 1rem;
+    }
+    .banner-slider {
+      display: flex;
+      width: 300%;
+      animation: slide 15s infinite;
+    }
+    .banner-slide {
+      flex: 1 0 100%;
+      position: relative;
+    }
+    .banner-slide img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 15px;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .banner-caption {
+      position: absolute;
+      top: 20%;
+      left: 10%;
+      color: white;
+      background: rgba(0,0,0,0.5);
+      padding: 1rem 1.5rem;
+      border-radius: 15px;
+      max-width: 70%;
+      font-weight: 700;
+      font-size: 1.8rem;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
+    }
+    @keyframes slide {
+      0% { transform: translateX(0); }
+      33% { transform: translateX(-100%); }
+      66% { transform: translateX(-200%); }
+      100% { transform: translateX(0); }
+    }
+    .discount-banner {
+      background: linear-gradient(90deg, #ff8a00, #e52e71);
+      color: white;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      font-weight: 700;
+      font-size: 1.4rem;
+      text-align: center;
+      box-shadow: 0 4px 6px rgb(229 46 113 / 0.5);
+      user-select: none;
+    }
+    .category-title {
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #343a40;
+      border-bottom: 3px solid #007bff;
+      display: inline-block;
+      padding-bottom: 3px;
+      user-select: none;
+    }
+    .books-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+    .book-card {
+      border: 1px solid #dee2e6;
+      border-radius: 15px;
+      transition: transform 0.2s;
+      background: white;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+    .book-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px #007bffaa;
+      z-index: 10;
+    }
+    .book-img {
+      height: 180px;
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+      object-fit: cover;
+      width: 100%;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .book-info {
+      padding: 0.5rem 1rem 1rem 1rem;
+      flex-grow: 1;
+    }
+    .book-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #212529;
+      margin-bottom: 0.2rem;
+    }
+    .book-author {
+      font-size: 0.85rem;
+      color: #6c757d;
+      margin-bottom: 0.4rem;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .book-price {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #007bff;
+      margin-bottom: 0.5rem;
+    }
+    .btn-add {
+      border-radius: 0 0 15px 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .order-status {
+      font-weight: 700;
+    }
+    .btn-cancel {
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem 0;
+      margin-top: auto;
+      background-color: #f1f1f1;
+      font-size: 0.9rem;
+      color: #6c757d;
+      user-select: none;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      z-index: 10;
+    }
+    section.page {
+      display: none;
+    }
+    section.page.active {
+      display: block;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #007bff88;
+      border-radius: 8px;
+    }
+    @media(max-width: 575.98px) {
+      .books-grid {
+        grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="#" id="nav-home">Mansoon BookShop</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarContent"
+        aria-controls="navbarContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+      <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navbar-list">
+          <li class="nav-item">
+            <a class="nav-link active" id="nav-link-home" href="#">Home</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="navbarDropdown"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Books
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown" id="books-dropdown">
+              <li><a class="dropdown-item book-category" href="#" data-category="horror">Horror</a></li>
+              <li><a class="dropdown-item book-category" href="#" data-category="thriller">Thriller</a></li>
+              <li><a class="dropdown-item book-category" href="#" data-category="romantic">Romantic</a></li>
+              <li><a class="dropdown-item book-category" href="#" data-category="philosophy">Philosophy</a></li>
+              <li><a class="dropdown-item book-category" href="#" data-category="politics">Politics</a></li>
+              <li><a class="dropdown-item book-category" href="#" data-category="selfhelp">Self-help</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="nav-link-cart" href="#">Cart (<span id="cart-count">0</span>)</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="nav-link-orders" href="#">Orders</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="nav-link-account" href="#">Account</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div id="main-container" class="container my-3">
+    <!-- Home Page -->
+    <section id="page-home" class="page active" aria-label="Home page">
+      <h1 class="mb-3 fw-bold text-primary text-center" tabindex="0">Welcome to Mansoon BookShop</h1>
+      <div class="banner shadow-sm" aria-label="Books promotional banners" role="region" tabindex="0">
+        <div class="banner-slider">
+          <div class="banner-slide">
+            <img src="https://images.pexels.com/photos/161632/books-book-pages-read-literature-161632.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=250&w=400" alt="Books Banner 1" />
+            <div class="banner-caption">Discover Your Next Favorite Book</div>
+          </div>
+          <div class="banner-slide">
+            <img src="https://images.pexels.com/photos/256541/pexels-photo-256541.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=250&w=400" alt="Books Banner 2" />
+            <div class="banner-caption">Top Trending Books - Updated Weekly</div>
+          </div>
+          <div class="banner-slide">
+            <img src="https://images.pexels.com/photos/5904936/pexels-photo-5904936.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=250&w=400" alt="Books Banner 3" />
+            <div class="banner-caption">Huge Discounts &amp; Exclusive Deals</div>
+          </div>
+        </div>
+      </div>
+      <div class="discount-banner shadow" tabindex="0" aria-live="polite">
+        🎉 Get up to 30% OFF on select categories! Limited time offer! 🎉
+      </div>
+      <div id="home-categories"></div>
+    </section>
+
+    <!-- Books Page -->
+    <section id="page-books" class="page" aria-label="Books category page">
+      <h1 class="category-title" id="books-category-title"></h1>
+      <div class="books-grid" id="books-list"></div>
+    </section>
+
+    <!-- Cart Page -->
+    <section id="page-cart" class="page" aria-label="Shopping Cart">
+      <h1>Your Cart</h1>
+      <ul class="list-group mb-3" id="cart-list" aria-live="polite" aria-label="Cart items"></ul>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Total: <span id="cart-total">₹0.00</span></h4>
+        <button class="btn btn-success" id="btn-place-order">Place Order</button>
+      </div>
+    </section>
+
+    <!-- Order Details Modal -->
+    <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form id="order-details-form" novalidate>
+            <div class="modal-header">
+              <h5 class="modal-title" id="orderDetailsModalLabel">Enter Personal Details for Order</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="order-name" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="order-name" required />
+                <div class="invalid-feedback">Please enter your full name.</div>
+              </div>
+              <div class="mb-3">
+                <label for="order-phone" class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" id="order-phone" pattern="[0-9]{10}" required />
+                <div class="invalid-feedback">Please enter a valid 10-digit phone number.</div>
+              </div>
+              <div class="mb-3">
+                <label for="order-address" class="form-label">Address</label>
+                <textarea class="form-control" id="order-address" rows="3" required></textarea>
+                <div class="invalid-feedback">Please enter your address.</div>
+              </div>
+              <div class="mb-3">
+                <label for="order-state" class="form-label">State</label>
+                <input type="text" class="form-control" id="order-state" required />
+                <div class="invalid-feedback">Please enter your state.</div>
+              </div>
+              <div class="mb-3">
+                <label for="order-country" class="form-label">Country</label>
+                <input type="text" class="form-control" id="order-country" required />
+                <div class="invalid-feedback">Please enter your country.</div>
+              </div>
+              <div class="mb-3">
+                <label for="order-pincode" class="form-label">Pincode</label>
+                <input type="text" class="form-control" id="order-pincode" pattern="\d{6}" required />
+                <div class="invalid-feedback">Please enter a valid 6-digit pincode.</div>
+              </div>
+              <div class="mb-3">
+                <label for="order-email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="order-email" required />
+                <div class="invalid-feedback">Please enter a valid email address.</div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Confirm Order</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Orders Page -->
+    <section id="page-orders" class="page" aria-label="Orders Page">
+      <h1>Your Orders</h1>
+      <ul class="list-group" id="orders-list" aria-live="polite" aria-label="Orders list"></ul>
+    </section>
+
+    <!-- Account Page -->
+    <section id="page-account" class="page" aria-label="Account Page">
+      <h1>Account</h1>
+      <form id="account-form" novalidate>
+        <div class="mb-3">
+          <label for="input-name" class="form-label fw-bold">Name</label>
+          <input type="text" class="form-control" id="input-name" required />
+          <div class="invalid-feedback">Please enter your name.</div>
+        </div>
+        <div class="mb-3">
+          <label for="input-email" class="form-label fw-bold">Email</label>
+          <input type="email" class="form-control" id="input-email" required />
+          <div class="invalid-feedback">Please enter a valid email.</div>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Profile</button>
+      </form>
+    </section>
+  </div>
+
+  <footer>
+    &copy; <span id="year"></span> Mansoon BookShop. All rights reserved.
+  </footer>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+  (function(){
+    'use strict';
+
+    const BOOKS_DB = {
+      horror: [
+        {id: 'h1', title: "The Haunting of Hill House", author: "Shirley Jackson", price: 1200.00, image:"https://images.pexels.com/photos/46274/pexels-photo-46274.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'h2', title: "Bird Box", author: "Josh Malerman", price: 1300.00, image:"https://images.pexels.com/photos/222858/pexels-photo-222858.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'h3', title: "Dracula", author: "Bram Stoker", price: 900.00, image:"https://images.pexels.com/photos/46274/pexels-photo-46274.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'h4', title: "The Shining", author: "Stephen King", price: 1400.00, image:"https://images.pexels.com/photos/33109/pexels-photo.jpg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'h5', title: "It", author: "Stephen King", price: 1500.00, image:"https://images.pexels.com/photos/33109/pexels-photo.jpg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'h6', title: "Mexican Gothic", author: "Silvia Moreno-Garcia", price: 1300.00, image:"https://images.pexels.com/photos/46274/pexels-photo-46274.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'h7', title: "The Exorcist", author: "William Peter Blatty", price: 990.00, image:"https://images.pexels.com/photos/222858/pexels-photo-222858.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'h8', title: "Frankenstein", author: "Mary Shelley", price: 850.00, image:"https://images.pexels.com/photos/33109/pexels-photo.jpg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'h9', title: "The Silence of the Lambs", author: "Thomas Harris", price: 1100.00, image:"https://images.pexels.com/photos/46274/pexels-photo-46274.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'h10', title: "Coraline", author: "Neil Gaiman", price: 950.00, image:"https://images.pexels.com/photos/222858/pexels-photo-222858.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"}
+      ],
+      thriller: [
+        {id: 't1', title: "Gone Girl", author: "Gillian Flynn", price: 1200.00, image:"https://images.pexels.com/photos/4606211/pexels-photo-4606211.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 't2', title: "The Girl with the Dragon Tattoo", author: "Stieg Larsson", price: 1450.00, image:"https://images.pexels.com/photos/514821/pexels-photo-514821.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 't3', title: "The Da Vinci Code", author: "Dan Brown", price: 1390.00, image:"https://images.pexels.com/photos/574071/pexels-photo-574071.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 't4', title: "Shutter Island", author: "Dennis Lehane", price: 1200.00, image:"https://images.pexels.com/photos/7432/pexels-photo.jpg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 't5', title: "The Silent Patient", author: "Alex Michaelides", price: 1250.00, image:"https://images.pexels.com/photos/354939/pexels-photo-354939.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 't6', title: "Big Little Lies", author: "Liane Moriarty", price: 1380.00, image:"https://images.pexels.com/photos/135351/pexels-photo-135351.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 't7', title: "In the Woods", author: "Tana French", price: 1100.00, image:"https://images.pexels.com/photos/236047/pexels-photo-236047.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 't8', title: "Before I Go to Sleep", author: "S J Watson", price: 1180.00, image:"https://images.pexels.com/photos/260024/pexels-photo-260024.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 't9', title: "The Couple Next Door", author: "Shari Lapena", price: 900.00, image:"https://images.pexels.com/photos/9846/pexels-photo.jpg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 't10', title: "Dark Places", author: "Gillian Flynn", price: 1300.00, image:"https://images.pexels.com/photos/260420/pexels-photo-260420.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+      ],
+      romantic: [
+        {id: 'r1', title: "Pride and Prejudice", author: "Jane Austen", price: 1099.00, image:"https://images.pexels.com/photos/46274/pexels-photo-46274.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'r2', title: "The Notebook", author: "Nicholas Sparks", price: 1150.00, image:"https://images.pexels.com/photos/4626/flower-purple-lical-blosso.jpg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'r3', title: "Me Before You", author: "Jojo Moyes", price: 1499.00, image:"https://images.pexels.com/photos/4498249/pexels-photo-4498249.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'r4', title: "Outlander", author: "Diana Gabaldon", price: 1599.00, image:"https://images.pexels.com/photos/89706/pexels-photo-89706.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'r5', title: "The Time Traveler's Wife", author: "Audrey Niffenegger", price: 1250.00, image:"https://images.pexels.com/photos/4652274/pexels-photo-4652274.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'r6', title: "Love in the Time of Cholera", author: "Gabriel Garcia Marquez", price: 1399.00, image:"https://images.pexels.com/photos/46274/pexels-photo-46274.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'r7', title: "Twilight", author: "Stephenie Meyer", price: 1450.00, image:"https://images.pexels.com/photos/4606211/pexels-photo-4606211.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'r8', title: "The Fault in Our Stars", author: "John Green", price: 1350.00, image:"https://images.pexels.com/photos/4598222/pexels-photo-4598222.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'r9', title: "Anna Karenina", author: "Leo Tolstoy", price: 1199.00, image:"https://images.pexels.com/photos/235269/pexels-photo-235269.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'r10', title: "Jane Eyre", author: "Charlotte Bronte", price: 1050.00, image:"https://images.pexels.com/photos/258447/pexels-photo-258447.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+      ],
+      philosophy: [
+        {id: 'p1', title: "The Republic", author: "Plato", price: 1299.00, image:"https://images.pexels.com/photos/267586/pexels-photo-267586.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'p2', title: "Meditations", author: "Marcus Aurelius", price: 1150.00, image:"https://images.pexels.com/photos/276467/pexels-photo-276467.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'p3', title: "Beyond Good and Evil", author: "Friedrich Nietzsche", price: 1499.00, image:"https://images.pexels.com/photos/276467/pexels-photo-276467.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'p4', title: "The Tao Te Ching", author: "Lao Tzu", price: 1099.00, image:"https://images.pexels.com/photos/267586/pexels-photo-267586.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'p5', title: "Existentialism is a Humanism", author: "Jean-Paul Sartre", price: 1300.00, image:"https://images.pexels.com/photos/276467/pexels-photo-276467.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'p6', title: "The Myth of Sisyphus", author: "Albert Camus", price: 1250.00, image:"https://images.pexels.com/photos/267586/pexels-photo-267586.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'p7', title: "Critique of Pure Reason", author: "Immanuel Kant", price: 1500.00, image:"https://images.pexels.com/photos/276467/pexels-photo-276467.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'p8', title: "The Art of War", author: "Sun Tzu", price: 1050.00, image:"https://images.pexels.com/photos/267586/pexels-photo-267586.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'p9', title: "The Prince", author: "Niccolò Machiavelli", price: 1199.00, image:"https://images.pexels.com/photos/276467/pexels-photo-276467.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'p10', title: "Tractatus Logico-Philosophicus", author: "Ludwig Wittgenstein", price: 1350.00, image:"https://images.pexels.com/photos/267586/pexels-photo-267586.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+      ],
+      politics: [
+        {id: 'po1', title: "The Communist Manifesto", author: "Karl Marx, Friedrich Engels", price: 990.00, image:"https://images.pexels.com/photos/36753/reading-book-pages-teacher-36753.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'po2', title: "The Prince", author: "Niccolò Machiavelli", price: 1150.00, image:"https://images.pexels.com/photos/106344/pexels-photo-106344.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'po3', title: "The Road to Serfdom", author: "Friedrich Hayek", price: 1400.00, image:"https://images.pexels.com/photos/164879/pexels-photo-164879.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'po4', title: "The Art of War", author: "Sun Tzu", price: 1099.00, image:"https://images.pexels.com/photos/5025427/pexels-photo-5025427.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'po5', title: "On Liberty", author: "John Stuart Mill", price: 1350.00, image:"https://images.pexels.com/photos/206359/pexels-photo-206359.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'po6', title: "The Origins of Totalitarianism", author: "Hannah Arendt", price: 1550.00, image:"https://images.pexels.com/photos/290368/pexels-photo-290368.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'po7', title: "Democracy in America", author: "Alexis de Tocqueville", price: 1300.00, image:"https://images.pexels.com/photos/3608853/pexels-photo-3608853.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'po8', title: "Politics", author: "Aristotle", price: 1100.00, image:"https://images.pexels.com/photos/268465/pexels-photo-268465.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'po9', title: "The Federalist Papers", author: "Alexander Hamilton, James Madison, John Jay", price: 1050.00, image:"https://images.pexels.com/photos/356079/pexels-photo-356079.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 'po10', title: "Capitalism and Freedom", author: "Milton Friedman", price: 1450.00, image:"https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+      ],
+      selfhelp: [
+        {id: 's1', title: "The Power of Habit", author: "Charles Duhigg", price: 1399.00, image:"https://images.pexels.com/photos/5185435/pexels-photo-5185435.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 's2', title: "Atomic Habits", author: "James Clear", price: 1550.00, image:"https://images.pexels.com/photos/5971723/pexels-photo-5971723.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 's3', title: "The 7 Habits of Highly Effective People", author: "Stephen Covey", price: 1400.00, image:"https://images.pexels.com/photos/4145192/pexels-photo-4145192.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 's4', title: "How to Win Friends and Influence People", author: "Dale Carnegie", price: 1250.00, image:"https://images.pexels.com/photos/7360/startup-people-office-team.jpg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 's5', title: "Think and Grow Rich", author: "Napoleon Hill", price: 1199.00, image:"https://images.pexels.com/photos/211122/pexels-photo-211122.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 's6', title: "You Are a Badass", author: "Jen Sincero", price: 1350.00, image:"https://images.pexels.com/photos/313691/pexels-photo-313691.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 's7', title: "The Subtle Art of Not Giving a F*ck", author: "Mark Manson", price: 1499.00, image:"https://images.pexels.com/photos/1117132/pexels-photo-1117132.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 's8', title: "Mindset: The New Psychology of Success", author: "Carol S. Dweck", price: 1500.00, image:"https://images.pexels.com/photos/4425762/pexels-photo-4425762.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 's9', title: "The Four Agreements", author: "Don Miguel Ruiz", price: 1300.00, image:"https://images.pexels.com/photos/521431/pexels-photo-521431.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+        {id: 's10', title: "Grit", author: "Angela Duckworth", price: 1299.00, image:"https://images.pexels.com/photos/7338/food-vegetables-person-woman.jpg?auto=compress&cs=tinysrgb&dpr=2&h=180&w=120"},
+      ]
+    };
+    const CATEGORY_NAMES = {
+      horror: "Horror",
+      thriller: "Thriller",
+      romantic: "Romantic",
+      philosophy: "Philosophy",
+      politics: "Politics",
+      selfhelp: "Self-help"
+    };
+
+    let cart = JSON.parse(localStorage.getItem("mansoon-cart") || "[]");
+    let order = JSON.parse(localStorage.getItem("mansoon-orders") || "[]");
+    let account = JSON.parse(localStorage.getItem("mansoon-account") || JSON.stringify({
+      name: "John Doe",
+      email: "johndoe@example.com"
+    }));
+
+    const homeSection = document.getElementById("page-home");
+    const booksSection = document.getElementById("page-books");
+    const cartSection = document.getElementById("page-cart");
+    const ordersSection = document.getElementById("page-orders");
+    const accountSection = document.getElementById("page-account");
+
+    const homeCategoriesContainer = document.getElementById("home-categories");
+    const booksCategoryTitle = document.getElementById("books-category-title");
+    const booksList = document.getElementById("books-list");
+
+    const cartList = document.getElementById("cart-list");
+    const cartTotalElem = document.getElementById("cart-total");
+    const placeOrderBtn = document.getElementById("btn-place-order");
+
+    const ordersList = document.getElementById("orders-list");
+
+    const accountForm = document.getElementById("account-form");
+    const inputName = document.getElementById("input-name");
+    const inputEmail = document.getElementById("input-email");
+
+    const cartCountElem = document.getElementById("cart-count");
+    const yearSpan = document.getElementById("year");
+
+    // Modal elements and instance
+    const orderDetailsModal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
+    const orderDetailsForm = document.getElementById('order-details-form');
+    const orderNameInput = document.getElementById('order-name');
+    const orderPhoneInput = document.getElementById('order-phone');
+    const orderAddressInput = document.getElementById('order-address');
+    const orderStateInput = document.getElementById('order-state');
+    const orderCountryInput = document.getElementById('order-country');
+    const orderPincodeInput = document.getElementById('order-pincode');
+    const orderEmailInput = document.getElementById('order-email');
+
+    // Initialize app
+    function init(){
+      yearSpan.textContent = new Date().getFullYear();
+
+      setupNavigation();
+      renderHomeCategories();
+      loadAccount();
+
+      placeOrderBtn.addEventListener('click', onPlaceOrderClicked);
+      orderDetailsForm.addEventListener('submit', onConfirmOrder);
+
+      accountForm.addEventListener('submit', onAccountFormSubmit);
+
+      updateCartCount();
+
+      showPage('home');
+    }
+
+    // Navigation handlers
+    function setupNavigation(){
+      document.getElementById('nav-home').addEventListener('click', e => {
+        e.preventDefault();
+        showPage('home');
+        setActiveNav('home');
+      });
+      document.getElementById('nav-link-home').addEventListener('click', e => {
+        e.preventDefault();
+        showPage('home');
+        set_active_nav('home');
+      });
+      document.getElementById('nav-link-cart').addEventListener('click', e => {
+        e.preventDefault();
+        showPage('cart');
+        setActiveNav('cart');
+        renderCart();
+      });
+      document.getElementById('nav-link-orders').addEventListener('click', e => {
+        e.preventDefault();
+        showPage('orders');
+        setActiveNav('orders');
+        renderOrders();
+      });
+      document.getElementById('nav-link-account').addEventListener('click', e => {
+        e.preventDefault();
+        showPage('account');
+        setActiveNav('account');
+      });
+      document.querySelectorAll('.book-category').forEach(link => {
+        link.addEventListener('click', e => {
+          e.preventDefault();
+          const category = e.target.dataset.category;
+          showBooksCategory(category);
+          showPage('books');
+          setActiveNav('books');
+        });
+      });
+    }
+
+    function setActiveNav(page){
+      document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+      if(page === 'books') {
+        document.querySelector('.nav-item.dropdown > a').classList.add('active');
+      } else {
+        const map = {
+          home: 'nav-link-home',
+          cart: 'nav-link-cart',
+          orders: 'nav-link-orders',
+          account: 'nav-link-account'
+        };
+        const el = document.getElementById(map[page]);
+        if(el) el.classList.add('active');
+      }
+    }
+
+    function showPage(id){
+      const pages = [homeSection, booksSection, cartSection, ordersSection, accountSection];
+      pages.forEach(pg => {
+        if(pg.id === 'page-'+id) pg.classList.add('active');
+        else pg.classList.remove('active');
+      });
+      if(id === 'cart') renderCart();
+      if(id === 'orders') renderOrders();
+    }
+
+    // Home category preview
+    function renderHomeCategories(){
+      homeCategoriesContainer.innerHTML = '';
+      for(const cat in CATEGORY_NAMES){
+        const section = document.createElement('section');
+        section.className = 'mb-4';
+        section.setAttribute('aria-labelledby', `cat-${cat}-title`);
+        section.innerHTML = `<h2 id="cat-${cat}-title" class="category-title">${CATEGORY_NAMES[cat]}</h2><div class="books-grid"></div><div class="text-end mt-2"><button class="btn btn-link btn-sm view-all-btn">View All ${CATEGORY_NAMES[cat]} Books »</button></div>`;
+        const booksGrid = section.querySelector('.books-grid');
+        BOOKS_DB[cat].slice(0,4).forEach(book => booksGrid.appendChild(createBookCard(book,true)));
+        section.querySelector('.view-all-btn').addEventListener('click', () => {
+          showBooksCategory(cat);
+          showPage('books');
+          setActiveNav('books');
+        });
+        homeCategoriesContainer.appendChild(section);
+      }
+    }
+
+    // Books page
+    function showBooksCategory(cat){
+      booksCategoryTitle.textContent = CATEGORY_NAMES[cat] || '';
+      booksList.innerHTML = '';
+      if (BOOKS_DB[cat]) {
+        BOOKS_DB[cat].slice(0,10).forEach(book => {
+          booksList.appendChild(createBookCard(book,true));
+        });
+      }
+    }
+
+    // Book card creation
+    function createBookCard(book, addButton){
+      const card = document.createElement('div');
+      card.className = 'book-card shadow-sm';
+      card.setAttribute('role','region');
+      card.setAttribute('aria-label',`Book: ${book.title} by ${book.author}`);
+
+      const img = document.createElement('img');
+      img.className = 'book-img';
+      img.src = book.image;
+      img.alt = book.title;
+      img.loading = 'lazy';
+
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'book-info d-flex flex-column';
+
+      const titleDiv = document.createElement('div');
+      titleDiv.className = 'book-title';
+      titleDiv.textContent = book.title;
+      infoDiv.appendChild(titleDiv);
+
+      const authorDiv = document.createElement('div');
+      authorDiv.className = 'book-author text-truncate';
+      authorDiv.textContent = `by ${book.author}`;
+      infoDiv.appendChild(authorDiv);
+
+      const priceDiv = document.createElement('div');
+      priceDiv.className = 'book-price';
+      priceDiv.textContent = formatINRCurrency(book.price);
+      infoDiv.appendChild(priceDiv);
+
+      if(addButton){
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-primary btn-add mt-auto';
+        btn.textContent = 'Add to Cart';
+        btn.type = 'button';
+        btn.addEventListener('click', () => addToCart(book.id));
+        infoDiv.appendChild(btn);
+      }
+
+      card.append(img, infoDiv);
+      return card;
+    }
+
+    // Cart functions
+    function addToCart(bookId){
+      const book = findBookById(bookId);
+      if(!book){alert("Book not found!");return;}
+      const exists = cart.find(item => item.id === bookId);
+      if(exists) exists.qty++;
+      else cart.push({...book, qty:1});
+      persistCart();
+      updateCartCount();
+      alert(`Added "${book.title}" to cart.`);
+    }
+    function findBookById(id){
+      for(let cat in BOOKS_DB){
+        const book = BOOKS_DB[cat].find(b => b.id === id);
+        if(book) return book;
+      }
+      return null;
+    }
+    function persistCart(){
+      localStorage.setItem('mansoon-cart', JSON.stringify(cart));
+    }
+    function updateCartCount(){
+      cartCountElem.textContent = cart.reduce((a,v) => a + v.qty, 0);
+    }
+    function renderCart(){
+      cartList.innerHTML = '';
+      if(cart.length === 0){
+        cartList.innerHTML = '<li class="list-group-item">Your cart is empty.</li>';
+        cartTotalElem.textContent = formatINRCurrency(0);
+        placeOrderBtn.disabled = true;
+        return;
+      }
+      placeOrderBtn.disabled = false;
+      cart.forEach(item=>{
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between align-items-center';
+        li.setAttribute('role','region');
+        li.setAttribute('aria-label',`${item.title} by ${item.author}, quantity ${item.qty}`);
+
+        const leftDiv = document.createElement('div');
+        leftDiv.className = 'd-flex align-items-center gap-3';
+
+        const img = document.createElement('img');
+        img.src = item.image;
+        img.alt = item.title;
+        img.style = 'height:60px; width:40px; object-fit: cover; border-radius:5px';
+        img.loading = 'lazy';
+
+        const infoDiv = document.createElement('div');
+        infoDiv.innerHTML = `<div class="fw-bold">${item.title}</div><small class="text-muted">by ${item.author}</small><div>Qty: ${item.qty}</div>`;
+
+        leftDiv.append(img, infoDiv);
+
+        const rightDiv = document.createElement('div');
+        rightDiv.className = 'd-flex flex-column align-items-end';
+
+        const priceDiv = document.createElement('div');
+        priceDiv.className = 'mb-2 fw-bold';
+        priceDiv.textContent = formatINRCurrency(item.price * item.qty);
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn btn-sm btn-outline-danger';
+        removeBtn.textContent = 'Remove';
+        removeBtn.type = 'button';
+        removeBtn.addEventListener('click',()=>removeFromCart(item.id));
+
+        rightDiv.append(priceDiv, removeBtn);
+
+        li.append(leftDiv, rightDiv);
+
+        cartList.appendChild(li);
+      });
+      const total = cart.reduce((a,v) => a+v.price*v.qty, 0);
+      cartTotalElem.textContent = formatINRCurrency(total);
+    }
+    function removeFromCart(id){
+      cart = cart.filter(item=> item.id !== id);
+      persistCart();
+      updateCartCount();
+      renderCart();
+    }
+
+    let orders = JSON.parse(localStorage.getItem("mansoon-orders") || "[]");
+    function persistOrders(){
+      localStorage.setItem('mansoon-orders', JSON.stringify(orders));
+    }
+    function onPlaceOrderClicked(){
+      if(cart.length===0) {
+        alert("Your cart is empty.");
+        return;
+      }
+      orderDetailsForm.classList.remove('was-validated');
+      orderDetailsForm.reset();
+
+      orderNameInput.value = account.name || '';
+      orderEmailInput.value = account.email || '';
+
+      orderDetailsModal.show();
+    }
+    function cancelOrder(id){
+      const order = orders.find(o => o.id === id);
+      if(!order || order.status === 'Cancelled'){
+        alert('Order already cancelled.');
+        return;
+      }
+      if(confirm('Are you sure you want to cancel this order?')){
+        order.status = 'Cancelled';
+        persistOrders();
+        alert('Order cancelled.');
+        renderOrders();
+      }
+    }
+    function renderOrders(){
+      ordersList.innerHTML = '';
+      if(orders.length === 0){
+        ordersList.innerHTML = '<li class="list-group-item">No orders yet.</li>';
+        return;
+      }
+      orders.forEach(order=>{
+        const li = document.createElement('li');
+        li.className = 'list-group-item shadow-sm rounded mb-3';
+        li.setAttribute('role','region');
+        li.setAttribute('aria-label',`Order ${order.id} status ${order.status}`);
+
+        let personalHtml = `<p><strong>Name:</strong> ${order.personalDetails.name}<br/>
+                            <strong>Phone:</strong> ${order.personalDetails.phone}<br/>
+                            <strong>Email:</strong> ${order.personalDetails.email}<br/>
+                            <strong>Address:</strong> ${order.personalDetails.address}, ${order.personalDetails.state}, ${order.personalDetails.country} - ${order.personalDetails.pincode}</p>`;
+
+        li.innerHTML =
+          `<div class="d-flex justify-content-between align-items-center mb-2">
+            <strong>Order ID:</strong> <span>${order.id}</span>
+            <span class="badge ${order.status==='Cancelled'?'bg-danger':'bg-success'}">${order.status}</span>
+          </div>
+          ${personalHtml}
+          <div><strong>Books:</strong>
+            <ul class="mb-0">`+
+              order.items.map(item => `<li>${item.title} x${item.qty} (${formatINRCurrency(item.price*item.qty)})</li>`).join('')+
+            `</ul>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <strong>Total:</strong> <span>${formatINRCurrency(order.total)}</span>
+            ${order.status==="Placed" ? `<button class="btn btn-sm btn-outline-danger btn-cancel">Cancel Order</button>` : ''}
+          </div>`;
+
+        if(order.status==="Placed"){
+          li.querySelector(".btn-cancel").addEventListener("click", () => cancelOrder(order.id));
+        }
+
+        ordersList.appendChild(li);
+      });
+    }
+    function generateOrderId(){
+      return Math.random().toString(36).substring(2,9).toUpperCase();
+    }
+    orderDetailsForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      if(!orderDetailsForm.checkValidity()){
+        orderDetailsForm.classList.add('was-validated');
+        return;
+      }
+      if(!orderPhoneInput.value.match(/^\d{10}$/)){
+        orderPhoneInput.classList.add('is-invalid');
+        return;
+      } else {
+        orderPhoneInput.classList.remove('is-invalid');
+      }
+      if(!orderPincodeInput.value.match(/^\d{6}$/)){
+        orderPincodeInput.classList.add('is-invalid');
+        return;
+      } else {
+        orderPincodeInput.classList.remove('is-invalid');
+      }
+      const personalDetails = {
+        name: orderNameInput.value.trim(),
+        phone: orderPhoneInput.value.trim(),
+        address: orderAddressInput.value.trim(),
+        state: orderStateInput.value.trim(),
+        country: orderCountryInput.value.trim(),
+        pincode: orderPincodeInput.value.trim(),
+        email: orderEmailInput.value.trim(),
+      };
+      const orderId = generateOrderId();
+      const total = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
+      const order = {
+        id: orderId,
+        items: cart.slice(),
+        total,
+        status: 'Placed',
+        date: new Date().toLocaleString(),
+        personalDetails
+      };
+      orders.unshift(order);
+      cart = [];
+      persistCart();
+      persistOrders();
+      updateCartCount();
+      alert(`Order #${orderId} placed successfully!`);
+      orderDetailsModal.hide();
+      renderOrders();
+      showPage('orders');
+      setActiveNav('orders');
+    });
+    function formatINRCurrency(num){
+      return '₹'+num.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2});
+    }
+    function loadAccount(){
+      inputName.value = account.name;
+      inputEmail.value = account.email;
+    }
+    function onAccountFormSubmit(e){
+      e.preventDefault();
+      if(!inputName.value.trim()){
+        inputName.classList.add('is-invalid');
+        return;
+      } else {
+        inputName.classList.remove('is-invalid');
+      }
+      if(!inputEmail.value.trim() || !validateEmail(inputEmail.value.trim())){
+        inputEmail.classList.add('is-invalid');
+        return;
+      } else {
+        inputEmail.classList.remove('is-invalid');
+      }
+      account.name = inputName.value.trim();
+      account.email = inputEmail.value.trim();
+      localStorage.setItem('mansoon-account', JSON.stringify(account));
+      alert('Profile saved!');
+    }
+    function validateEmail(email){
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      yearSpan.textContent = new Date().getFullYear();
+      setupNavigation();
+      renderHomeCategories();
+      loadAccount();
+      placeOrderBtn.addEventListener('click', onPlaceOrderClicked);
+      accountForm.addEventListener('submit', onAccountFormSubmit);
+      updateCartCount();
+      showPage('home');
+      setActiveNav('home');
+    });
+
+    function setupNavigation(){
+      document.getElementById('nav-home').addEventListener('click', e => {
+        e.preventDefault();
+        showPage('home');
+        setActiveNav('home');
+      });
+      document.getElementById('nav-link-home').addEventListener('click', e => {
+        e.preventDefault();
+        showPage('home');
+        setActiveNav('home');
+      });
+      document.getElementById('nav-link-cart').addEventListener('click', e => {
+        e.preventDefault();
+        showPage('cart');
+        setActiveNav('cart');
+        renderCart();
+      });
+      document.getElementById('nav-link-orders').addEventListener('click', e => {
+        e.preventDefault();
+        showPage('orders');
+        setActiveNav('orders');
+        renderOrders();
+      });
+      document.getElementById('nav-link-account').addEventListener('click', e => {
+        e.preventDefault();
+        showPage('account');
+        setActiveNav('account');
+      });
+      document.querySelectorAll('.book-category').forEach(link => {
+        link.addEventListener('click', e => {
+          e.preventDefault();
+          const cat = e.target.dataset.category;
+          showBooksCategory(cat);
+          showPage('books');
+          setActiveNav('books');
+        });
+      });
+    }
+
+    function setActiveNav(page){
+      document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+      if(page === 'books') {
+        document.querySelector('.nav-item.dropdown > a').classList.add('active');
+      } else {
+        const map = {
+          home: 'nav-link-home',
+          cart: 'nav-link-cart',
+          orders: 'nav-link-orders',
+          account: 'nav-link-account'
+        };
+        const el = document.getElementById(map[page]);
+        if(el) el.classList.add('active');
+      }
+    }
+
+    function showPage(id){
+      const pages = [homeSection, booksSection, cartSection, ordersSection, accountSection];
+      pages.forEach(pg => {
+        if(pg.id === 'page-'+id) pg.classList.add('active');
+        else pg.classList.remove('active');
+      });
+      if(id === 'cart') renderCart();
+      if(id === 'orders') renderOrders();
+    }
+
+    function renderHomeCategories(){
+      homeCategoriesContainer.innerHTML = '';
+      for(const cat in CATEGORY_NAMES){
+        const section = document.createElement('section');
+        section.className = 'mb-4';
+        section.setAttribute('aria-labelledby', `cat-${cat}-title`);
+        section.innerHTML = `<h2 id="cat-${cat}-title" class="category-title">${CATEGORY_NAMES[cat]}</h2><div class="books-grid"></div><div class="text-end mt-2"><button class="btn btn-link btn-sm view-all-btn">View All ${CATEGORY_NAMES[cat]} Books »</button></div>`;
+        const booksGrid = section.querySelector('.books-grid');
+        BOOKS_DB[cat].slice(0,4).forEach(book => booksGrid.appendChild(createBookCard(book,true)));
+        section.querySelector('.view-all-btn').addEventListener('click', () => {
+          showBooksCategory(cat);
+          showPage('books');
+          setActiveNav('books');
+        });
+        homeCategoriesContainer.appendChild(section);
+      }
+    }
+
+    function showBooksCategory(cat){
+      booksCategoryTitle.textContent = CATEGORY_NAMES[cat] || '';
+      booksList.innerHTML = '';
+      if (BOOKS_DB[cat]) {
+        BOOKS_DB[cat].slice(0,10).forEach(book => {
+          booksList.appendChild(createBookCard(book,true));
+        });
+      }
+    }
+
+    function createBookCard(book, addButton){
+      const card = document.createElement('div');
+      card.className = 'book-card shadow-sm';
+      card.setAttribute('role','region');
+      card.setAttribute('aria-label',`Book: ${book.title} by ${book.author}`);
+
+      const img = document.createElement('img');
+      img.className = 'book-img';
+      img.src = book.image;
+      img.alt = book.title;
+      img.loading = 'lazy';
+
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'book-info d-flex flex-column';
+
+      const titleDiv = document.createElement('div');
+      titleDiv.className = 'book-title';
+      titleDiv.textContent = book.title;
+      infoDiv.appendChild(titleDiv);
+
+      const authorDiv = document.createElement('div');
+      authorDiv.className = 'book-author text-truncate';
+      authorDiv.textContent = `by ${book.author}`;
+      infoDiv.appendChild(authorDiv);
+
+      const priceDiv = document.createElement('div');
+      priceDiv.className = 'book-price';
+      priceDiv.textContent = formatINRCurrency(book.price);
+      infoDiv.appendChild(priceDiv);
+
+      if(addButton){
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-primary btn-add mt-auto';
+        btn.textContent = 'Add to Cart';
+        btn.type = 'button';
+        btn.addEventListener('click', () => addToCart(book.id));
+        infoDiv.appendChild(btn);
+      }
+
+      card.append(img, infoDiv);
+      return card;
+    }
+
+    function addToCart(bookId){
+      const book = findBookById(bookId);
+      if(!book){alert("Book not found!");return;}
+      const exists = cart.find(item => item.id === bookId);
+      if(exists) exists.qty++;
+      else cart.push({...book, qty:1});
+      persistCart();
+      updateCartCount();
+      alert(`Added "${book.title}" to cart.`);
+    }
+
+    function findBookById(id){
+      for(let cat in BOOKS_DB){
+        const book = BOOKS_DB[cat].find(b => b.id === id);
+        if(book) return book;
+      }
+      return null;
+    }
+
+    function persistCart(){
+      localStorage.setItem('mansoon-cart', JSON.stringify(cart));
+    }
+
+    function updateCartCount(){
+      cartCountElem.textContent = cart.reduce((a,v) => a + v.qty, 0);
+    }
+
+    function renderCart(){
+      cartList.innerHTML = '';
+      if(cart.length === 0){
+        cartList.innerHTML = '<li class="list-group-item">Your cart is empty.</li>';
+        cartTotalElem.textContent = formatINRCurrency(0);
+        placeOrderBtn.disabled = true;
+        return;
+      }
+      placeOrderBtn.disabled = false;
+      cart.forEach(item=>{
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between align-items-center';
+        li.setAttribute('role','region');
+        li.setAttribute('aria-label',`${item.title} by ${item.author}, quantity ${item.qty}`);
+
+        const leftDiv = document.createElement('div');
+        leftDiv.className = 'd-flex align-items-center gap-3';
+
+        const img = document.createElement('img');
+        img.src = item.image;
+        img.alt = item.title;
+        img.style = 'height:60px; width:40px; object-fit: cover; border-radius:5px';
+        img.loading = 'lazy';
+
+        const infoDiv = document.createElement('div');
+        infoDiv.innerHTML = `<div class="fw-bold">${item.title}</div><small class="text-muted">by ${item.author}</small><div>Qty: ${item.qty}</div>`;
+
+        leftDiv.append(img, infoDiv);
+
+        const rightDiv = document.createElement('div');
+        rightDiv.className = 'd-flex flex-column align-items-end';
+
+        const priceDiv = document.createElement('div');
+        priceDiv.className = 'mb-2 fw-bold';
+        priceDiv.textContent = formatINRCurrency(item.price * item.qty);
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn btn-sm btn-outline-danger';
+        removeBtn.textContent = 'Remove';
+        removeBtn.type = 'button';
+        removeBtn.addEventListener('click',()=>removeFromCart(item.id));
+
+        rightDiv.append(priceDiv, removeBtn);
+
+        li.append(leftDiv, rightDiv);
+
+        cartList.appendChild(li);
+      });
+      const total = cart.reduce((a,v) => a+v.price*v.qty, 0);
+      cartTotalElem.textContent = formatINRCurrency(total);
+    }
+
+    function removeFromCart(id){
+      cart = cart.filter(item=> item.id !== id);
+      persistCart();
+      updateCartCount();
+      renderCart();
+    }
+
+    function persistOrders(){
+      localStorage.setItem('mansoon-orders', JSON.stringify(orders));
+    }
+
+    function onPlaceOrderClicked(){
+      if(cart.length===0) {
+        alert("Your cart is empty.");
+        return;
+      }
+      orderDetailsForm.classList.remove('was-validated');
+      orderDetailsForm.reset();
+
+      orderNameInput.value = account.name || '';
+      orderEmailInput.value = account.email || '';
+
+      orderDetailsModal.show();
+    }
+
+    function cancelOrder(id){
+      const order = orders.find(o => o.id === id);
+      if(!order || order.status === 'Cancelled'){
+        alert('Order already cancelled.');
+        return;
+      }
+      if(confirm('Are you sure you want to cancel this order?')){
+        order.status = 'Cancelled';
+        persistOrders();
+        alert('Order cancelled.');
+        renderOrders();
+      }
+    }
+
+    function renderOrders(){
+      ordersList.innerHTML = '';
+      if(orders.length === 0){
+        ordersList.innerHTML = '<li class="list-group-item">No orders yet.</li>';
+        return;
+      }
+      orders.forEach(order=>{
+        const li = document.createElement('li');
+        li.className = 'list-group-item shadow-sm rounded mb-3';
+        li.setAttribute('role','region');
+        li.setAttribute('aria-label',`Order ${order.id} status ${order.status}`);
+
+        let personalHtml = `<p><strong>Name:</strong> ${order.personalDetails.name}<br/>
+                            <strong>Phone:</strong> ${order.personalDetails.phone}<br/>
+                            <strong>Email:</strong> ${order.personalDetails.email}<br/>
+                            <strong>Address:</strong> ${order.personalDetails.address}, ${order.personalDetails.state}, ${order.personalDetails.country} - ${order.personalDetails.pincode}</p>`;
+
+        li.innerHTML =
+          `<div class="d-flex justify-content-between align-items-center mb-2">
+            <strong>Order ID:</strong> <span>${order.id}</span>
+            <span class="badge ${order.status==='Cancelled'?'bg-danger':'bg-success'}">${order.status}</span>
+          </div>
+          ${personalHtml}
+          <div><strong>Books:</strong>
+            <ul class="mb-0">`+
+              order.items.map(item => `<li>${item.title} x${item.qty} (${formatINRCurrency(item.price*item.qty)})</li>`).join('')+
+            `</ul>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <strong>Total:</strong> <span>${formatINRCurrency(order.total)}</span>
+            ${order.status==="Placed" ? `<button class="btn btn-sm btn-outline-danger btn-cancel">Cancel Order</button>` : ''}
+          </div>`;
+
+        if(order.status==="Placed"){
+          li.querySelector(".btn-cancel").addEventListener("click", () => cancelOrder(order.id));
+        }
+
+        ordersList.appendChild(li);
+      });
+    }
+
+    function generateOrderId(){
+      return Math.random().toString(36).substring(2,9).toUpperCase();
+    }
+
+    orderDetailsForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      if(!orderDetailsForm.checkValidity()){
+        orderDetailsForm.classList.add('was-validated');
+        return;
+      }
+      if(!orderPhoneInput.value.match(/^\d{10}$/)){
+        orderPhoneInput.classList.add('is-invalid');
+        return;
+      } else {
+        orderPhoneInput.classList.remove('is-invalid');
+      }
+      if(!orderPincodeInput.value.match(/^\d{6}$/)){
+        orderPincodeInput.classList.add('is-invalid');
+        return;
+      } else {
+        orderPincodeInput.classList.remove('is-invalid');
+      }
+      const personalDetails = {
+        name: orderNameInput.value.trim(),
+        phone: orderPhoneInput.value.trim(),
+        address: orderAddressInput.value.trim(),
+        state: orderStateInput.value.trim(),
+        country: orderCountryInput.value.trim(),
+        pincode: orderPincodeInput.value.trim(),
+        email: orderEmailInput.value.trim(),
+      };
+      const orderId = generateOrderId();
+      const total = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
+      const order = {
+        id: orderId,
+        items: cart.slice(),
+        total,
+        status: 'Placed',
+        date: new Date().toLocaleString(),
+        personalDetails
+      };
+      orders.unshift(order);
+      cart = [];
+      persistCart();
+      persistOrders();
+      updateCartCount();
+      alert(`Order #${orderId} placed successfully!`);
+      orderDetailsModal.hide();
+      renderOrders();
+      showPage('orders');
+      setActiveNav('orders');
+    });
+
+    function formatINRCurrency(num){
+      return '₹'+num.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2});
+    }
+
+  })();
+  </script>
+</body>
+</html>
+
